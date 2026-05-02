@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EncodeLab — Multi-Layer Encoding Visualizer</title>
+  <meta name="description" content="Build multi-layer encoding pipelines with Base32, Base45, Base58, Base62, Base64, Base85, Binary, Hex, ASCII, ROT13, ROT47 — visualized step by step." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- ══ HEADER ══ -->
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">Encode<span class="accent">Lab</span></span>
+      </div>
+      <p class="header-subtitle">Multi-Layer Encoding Pipeline Visualizer</p>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ══ HOW IT WORKS BANNER ══ -->
+    <div class="how-banner">
+      <div class="how-item">
+        <span class="how-num">①</span>
+        <div class="how-text">
+          <strong>Type</strong> your text
+        </div>
+      </div>
+      <div class="how-arrow">→</div>
+      <div class="how-item">
+        <span class="how-num">②</span>
+        <div class="how-text">
+          <strong>Click</strong> encoders to chain layers
+        </div>
+      </div>
+      <div class="how-arrow">→</div>
+      <div class="how-item">
+        <span class="how-num">③</span>
+        <div class="how-text">
+          <strong>Run</strong> to see each step
+        </div>
+      </div>
+      <div class="how-arrow">→</div>
+      <div class="how-item">
+        <span class="how-num how-num-out">⬡</span>
+        <div class="how-text">
+          Output of layer 1 → input of layer 2 → …
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ STEP 1 — INPUT ══ -->
+    <section class="card">
+      <div class="card-step-label">
+        <span class="step-dot">1</span>
+        Type or paste your input text
+        <span class="card-hint">This is the raw text that will be encoded</span>
+      </div>
+      <textarea id="inputText" class="input-field" placeholder="e.g. Hello World" rows="2" spellcheck="false">Hello World</textarea>
+    </section>
+
+    <!-- ══ STEP 2 — BUILD PIPELINE ══ -->
+    <section class="card">
+      <div class="card-step-label">
+        <span class="step-dot">2</span>
+        Choose your encoding layers
+        <span class="card-hint">Each encoder's output becomes the next layer's input</span>
+      </div>
+
+      <!-- Instruction callout -->
+      <div class="instruction-box">
+        <span class="instruction-icon">👆</span>
+        <div class="instruction-text">
+          <strong>Click any encoder below</strong> to add it as a layer.
+          You can add multiple layers — even the same encoder twice.
+          Use <kbd>↑</kbd> <kbd>↓</kbd> to reorder and <kbd>✕</kbd> to remove a layer.
+        </div>
+      </div>
+
+      <!-- Encoder chips -->
+      <div class="chips-label">Available Encoders — click to add</div>
+      <div class="encoder-grid" id="encoderGrid"></div>
+
+      <!-- Layer queue -->
+      <div class="queue-label">
+        Your Pipeline Layers
+        <span class="queue-label-hint" id="queueCountLabel"></span>
+      </div>
+      <div class="queue-area" id="queueArea">
+        <div class="queue-empty" id="queueEmpty">
+          <span class="queue-empty-icon">⬡</span>
+          <span>No layers added yet.<br>Click an encoder above to begin building your pipeline.</span>
+        </div>
+        <div class="queue-list" id="queueList"></div>
+      </div>
+    </section>
+
+    <!-- ══ STEP 3 — RUN ══ -->
+    <section class="card card-run">
+      <div class="run-left">
+        <div class="card-step-label" style="margin-bottom:.3rem">
+          <span class="step-dot">3</span>
+          Run the pipeline
+        </div>
+        <p class="run-hint">
+          Each layer transforms the text, then passes the result to the next layer.
+          You'll see a detailed breakdown of <em>every encoding step</em>.
+        </p>
+        <p class="run-tip">💡 Tip: Press <kbd>Ctrl + Enter</kbd> to run quickly</p>
+      </div>
+      <div class="run-right">
+        <div class="speed-control">
+          <span class="speed-label">Animation Speed</span>
+          <div class="speed-btns">
+            <button class="speed-btn active" data-speed="500">Slow</button>
+            <button class="speed-btn" data-speed="200">Normal</button>
+            <button class="speed-btn" data-speed="60">Fast</button>
+          </div>
+        </div>
+        <div class="run-btns">
+          <button id="encodeBtn" class="btn btn-primary" disabled>
+            ▶&nbsp; Run Pipeline
+          </button>
+          <button id="clearBtn" class="btn btn-ghost">↺ Reset All</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ OUTPUT ══ -->
+    <section id="outputSection" class="hidden">
+
+      <!-- Summary table -->
+      <div class="card" id="summarySection">
+        <div class="card-step-label">
+          <span class="step-dot done">✓</span>
+          Pipeline Summary
+          <span class="card-hint">Each row shows what one encoding layer did to the text</span>
+        </div>
+
+        <div class="summary-help">
+          The table below shows every layer: what went <strong>in</strong>, what came <strong>out</strong>, and how the size changed.
+          Click any layer panel below to explore the step-by-step math.
+        </div>
+
+        <div class="summary-table-wrap">
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th>Layer</th>
+                <th>Encoder</th>
+                <th>Input (before encoding)</th>
+                <th>Output (after encoding)</th>
+                <th>Output Size</th>
+              </tr>
+            </thead>
+            <tbody id="summaryBody"></tbody>
+          </table>
+        </div>
+
+        <!-- Final output -->
+        <div class="final-block">
+          <div class="final-block-label">
+            🏁 Final Encoded Output
+            <span class="final-block-hint">— after all layers have been applied</span>
+          </div>
+          <div class="final-output-row">
+            <div class="final-output-text" id="finalOutputText"></div>
+            <button class="copy-btn" id="copyBtn">⎘ Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer-by-layer step panels -->
+      <div class="layer-panels-label">
+        Step-by-Step Breakdown — click any layer to expand
+      </div>
+      <div id="layerPanels"></div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <p>EncodeLab &copy; 2025 — Chain encoders to build multi-layer encoding pipelines</p>
+  </footer>
+
+  <script src="encoders.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
