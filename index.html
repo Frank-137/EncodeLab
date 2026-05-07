@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EncodeLab — Multi-Layer Encoding Visualizer</title>
-  <meta name="description" content="Build multi-layer encoding pipelines with Base32, Base45, Base58, Base62, Base64, Base85, Binary, Hex, ASCII, ROT13, ROT47 — visualized step by step." />
+  <title>EncodeLab</title>
+  <meta name="description"
+    content="Build multi-layer encoding pipelines with Base32, Base45, Base58, Base62, Base64, Base85, Binary, Hex, ASCII, ROT13, ROT47 — visualized step by step." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <div class="bg-grid"></div>
   <div class="orb orb-1"></div>
@@ -19,10 +24,10 @@
   <header>
     <div class="header-inner">
       <div class="logo">
-        <span class="logo-icon">⬡</span>
+        <!-- <span class="logo-icon">⬡</span> -->
         <span class="logo-text">Encode<span class="accent">Lab</span></span>
       </div>
-      <p class="header-subtitle">Multi-Layer Encoding Pipeline Visualizer</p>
+      <p class="header-subtitle">Data Encoding Visualization for Beginners</p>
     </div>
   </header>
 
@@ -40,7 +45,7 @@
       <div class="how-item">
         <span class="how-num">②</span>
         <div class="how-text">
-          <strong>Click</strong> encoders to chain layers
+          <strong>Choose</strong> your encoding layers
         </div>
       </div>
       <div class="how-arrow">→</div>
@@ -50,13 +55,13 @@
           <strong>Run</strong> to see each step
         </div>
       </div>
-      <div class="how-arrow">→</div>
+      <!-- <div class="how-arrow">→</div>
       <div class="how-item">
         <span class="how-num how-num-out">⬡</span>
         <div class="how-text">
           Output of layer 1 → input of layer 2 → …
         </div>
-      </div>
+      </div> -->
     </div>
 
     <!-- ══ STEP 1 — INPUT ══ -->
@@ -66,7 +71,8 @@
         Type or paste your input text
         <span class="card-hint">This is the raw text that will be encoded</span>
       </div>
-      <textarea id="inputText" class="input-field" placeholder="e.g. Hello World" rows="2" spellcheck="false">Hello World</textarea>
+      <textarea id="inputText" class="input-field" placeholder="e.g. Hello World" rows="2"
+        spellcheck="false">Hello World</textarea>
     </section>
 
     <!-- ══ STEP 2 — BUILD PIPELINE ══ -->
@@ -116,7 +122,7 @@
           Each layer transforms the text, then passes the result to the next layer.
           You'll see a detailed breakdown of <em>every encoding step</em>.
         </p>
-        <p class="run-tip">💡 Tip: Press <kbd>Ctrl + Enter</kbd> to run quickly</p>
+        <!-- <p class="run-tip">💡 Tip: Press <kbd>Ctrl + Enter</kbd> to run quickly</p> -->
       </div>
       <div class="run-right">
         <div class="speed-control">
@@ -148,7 +154,8 @@
         </div>
 
         <div class="summary-help">
-          The table below shows every layer: what went <strong>in</strong>, what came <strong>out</strong>, and how the size changed.
+          The table below shows every layer: what went <strong>in</strong>, what came <strong>out</strong>, and how the
+          size changed.
           Click any layer panel below to explore the step-by-step math.
         </div>
 
@@ -191,10 +198,11 @@
   </main>
 
   <footer>
-    <p>EncodeLab &copy; 2025 — Chain encoders to build multi-layer encoding pipelines</p>
+    <p>EncodeLab &copy; 2026 — Data Encoding Visualization for Beginners</p>
   </footer>
 
   <script src="encoders.js"></script>
   <script src="app.js"></script>
 </body>
+
 </html>
