@@ -67,7 +67,6 @@ header {
   top: 0;
   z-index: 20;
   min-height: 44px;
-  padding: 0 20px;
   background: rgba(255, 255, 255, 0.8);
   border-bottom: 1px solid rgba(0, 0, 0, 0.10);
   -webkit-backdrop-filter: saturate(180%) blur(18px);
@@ -78,6 +77,7 @@ header {
   max-width: 1262px;
   min-height: 44px;
   margin: 0 auto;
+  padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
