@@ -11,31 +11,30 @@
 
 // ── Color palette (one per layer) ─────────────────────────────────────────────
 const LAYER_COLORS = [
-  '#7c5cfc','#fc5ca8','#5cf4fc','#fc9a5c',
-  '#5cf46c','#fccc5c','#a07cfc','#fc7caa',
-  '#7ccffc','#fc5c5c','#c45cfc'
+  '#0071E3', '#006EDB', '#0077ED', '#1D1D1F',
+  '#333336', '#6E6E73', '#0076DF', '#272729'
 ];
 const layerColor = i => LAYER_COLORS[i % LAYER_COLORS.length];
 
 // ── State ─────────────────────────────────────────────────────────────────────
-let layers    = [];   // [{ key, uid }]  — ordered list
+let layers = [];   // [{ key, uid }]  — ordered list
 let animSpeed = 500;
 let animTimers = [];
-let uidSeq    = 0;
+let uidSeq = 0;
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
-const $inputText    = document.getElementById('inputText');
-const $encoderGrid  = document.getElementById('encoderGrid');
-const $encodeBtn    = document.getElementById('encodeBtn');
-const $clearBtn     = document.getElementById('clearBtn');
-const $outputSec    = document.getElementById('outputSection');
-const $finalText    = document.getElementById('finalOutputText');
-const $copyBtn      = document.getElementById('copyBtn');
-const $layerPanels  = document.getElementById('layerPanels');
-const $summaryBody  = document.getElementById('summaryBody');
-const $queueEmpty   = document.getElementById('queueEmpty');
-const $queueList    = document.getElementById('queueList');
-const $queueCount   = document.getElementById('queueCountLabel');
+const $inputText = document.getElementById('inputText');
+const $encoderGrid = document.getElementById('encoderGrid');
+const $encodeBtn = document.getElementById('encodeBtn');
+const $clearBtn = document.getElementById('clearBtn');
+const $outputSec = document.getElementById('outputSection');
+const $finalText = document.getElementById('finalOutputText');
+const $copyBtn = document.getElementById('copyBtn');
+const $layerPanels = document.getElementById('layerPanels');
+const $summaryBody = document.getElementById('summaryBody');
+const $queueEmpty = document.getElementById('queueEmpty');
+const $queueList = document.getElementById('queueList');
+const $queueCount = document.getElementById('queueCountLabel');
 
 // ── Build encoder chips ───────────────────────────────────────────────────────
 function buildChips() {
@@ -108,13 +107,13 @@ function renderQueue() {
   }
   $queueEmpty.classList.add('hidden');
   if ($queueCount) {
-    const names = layers.map(({key}, i) => `L${i+1}:${ENCODERS[key].label}`).join(' → ');
+    const names = layers.map(({ key }, i) => `L${i + 1}:${ENCODERS[key].label}`).join(' → ');
     $queueCount.textContent = `${layers.length} layer${layers.length > 1 ? 's' : ''} — ${names}`;
   }
 
   layers.forEach(({ key, uid }, i) => {
     const color = layerColor(i);
-    const enc   = ENCODERS[key];
+    const enc = ENCODERS[key];
 
     // Arrow separator between items
     if (i > 0) {
@@ -178,12 +177,12 @@ function renderSummary(rawInput, results) {
   $summaryBody.innerHTML = '';
 
   // Raw input row
-  $summaryBody.appendChild(makeSumRow('—', 'Raw Input', '—', rawInput, rawInput.length, '#6666aa'));
+  $summaryBody.appendChild(makeSumRow('—', 'Raw Input', '—', rawInput, rawInput.length, '#6E6E73'));
 
   results.forEach((r, i) => {
     const color = layerColor(i);
     $summaryBody.appendChild(
-      makeSumRow(`L${i+1}`, ENCODERS[r.key].label, r.input, r.output, r.output.length, color, r.input.length)
+      makeSumRow(`L${i + 1}`, ENCODERS[r.key].label, r.input, r.output, r.output.length, color, r.input.length)
     );
   });
 }
@@ -205,7 +204,7 @@ function makeSumRow(layerLabel, encName, inputVal, outputVal, outLen, color, inL
 }
 
 function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 // ── DOM builders ──────────────────────────────────────────────────────────────
@@ -272,7 +271,7 @@ function buildStepCard(step, idx, color) {
     body.appendChild(e);
   }
   if (step.charBlocks?.length) { body.appendChild(buildCharBlocks(step.charBlocks)); body.appendChild(mkSpacer()); }
-  if (step.bits)               { body.appendChild(buildBitStream(step.bits)); body.appendChild(mkSpacer()); }
+  if (step.bits) { body.appendChild(buildBitStream(step.bits)); body.appendChild(mkSpacer()); }
   if (step.data?.length) {
     const grid = document.createElement('div'); grid.className = 'data-grid';
     step.data.forEach(item => grid.appendChild(buildDataRow(item)));
@@ -291,7 +290,7 @@ function buildStepCard(step, idx, color) {
 // ── Layer panel ───────────────────────────────────────────────────────────────
 function buildLayerPanel(li, key, inp, steps, out) {
   const enc = ENCODERS[key], color = layerColor(li);
-  const trim = (s, n=44) => s.length > n ? s.slice(0,n) + '…' : s;
+  const trim = (s, n = 44) => s.length > n ? s.slice(0, n) + '…' : s;
 
   const panel = document.createElement('div');
   panel.className = 'layer-panel'; panel.id = `lp-${li}`;
@@ -306,11 +305,11 @@ function buildLayerPanel(li, key, inp, steps, out) {
 
   const badge = document.createElement('div'); badge.className = 'layer-num-badge';
   badge.style.cssText = `background:linear-gradient(135deg,${color},${color}99);box-shadow:0 0 12px ${color}44`;
-  badge.textContent = `L${li+1}`;
+  badge.textContent = `L${li + 1}`;
 
   const info = document.createElement('div'); info.className = 'layer-header-info';
   const t = document.createElement('div'); t.className = 'layer-header-title'; t.style.color = color;
-  t.textContent = enc.label + ' — Layer ' + (li+1);
+  t.textContent = enc.label + ' — Layer ' + (li + 1);
   const sub = document.createElement('div'); sub.className = 'layer-header-subtitle';
   sub.innerHTML =
     `<span class="layer-header-in">"${escHtml(trim(inp))}"</span>` +
@@ -359,8 +358,8 @@ function buildLayerPanel(li, key, inp, steps, out) {
 // ── Run pipeline ──────────────────────────────────────────────────────────────
 function runPipeline() {
   const raw = $inputText.value.trim();
-  if (!raw)             { shake($inputText); $inputText.focus(); return; }
-  if (!layers.length)   { shake($encoderGrid); return; }
+  if (!raw) { shake($inputText); $inputText.focus(); return; }
+  if (!layers.length) { shake($encoderGrid); return; }
 
   killTimers();
   $outputSec.classList.add('hidden');
@@ -371,7 +370,7 @@ function runPipeline() {
   let cur = raw;
   for (const { key } of layers) {
     let res;
-    try   { res = ENCODERS[key].fn(cur); }
+    try { res = ENCODERS[key].fn(cur); }
     catch (e) { res = { output: `[Error: ${e.message}]`, steps: [{ title: 'Error', explanation: e.message, data: [] }] }; }
     results.push({ key, input: cur, output: res.output, steps: res.steps });
     cur = res.output;
@@ -401,8 +400,8 @@ function runPipeline() {
     const { steps } = results[li];
     const color = layerColor(li);
     const inner = document.getElementById(`ls-${li}`);
-    const pf    = document.getElementById(`pf-${li}`);
-    const pl    = document.getElementById(`pl-${li}`);
+    const pf = document.getElementById(`pf-${li}`);
+    const pl = document.getElementById(`pl-${li}`);
     if (!inner) return;
 
     const cards = steps.map((s, si) => {
@@ -417,12 +416,12 @@ function runPipeline() {
         if (li === 0 && si === 0) push(() => cards[0].classList.add('open'), 180);
         const pct = Math.round((si + 1) / cards.length * 100);
         if (pf) pf.style.width = pct + '%';
-        if (pl) pl.textContent = `${si+1} / ${cards.length} steps`;
+        if (pl) pl.textContent = `${si + 1} / ${cards.length} steps`;
         si++;
         push(reveal, animSpeed);
       } else {
         push(() => {
-          document.getElementById(`lp-${li+1}`)?.classList.add('expanded');
+          document.getElementById(`lp-${li + 1}`)?.classList.add('expanded');
           animateLayer(li + 1);
         }, Math.max(animSpeed * 0.6, 100));
       }
@@ -433,7 +432,7 @@ function runPipeline() {
 }
 
 function push(fn, delay) { const t = setTimeout(fn, delay); animTimers.push(t); }
-function killTimers()    { animTimers.forEach(clearTimeout); animTimers = []; }
+function killTimers() { animTimers.forEach(clearTimeout); animTimers = []; }
 
 // ── Reset ─────────────────────────────────────────────────────────────────────
 function resetAll() {
@@ -450,9 +449,9 @@ function resetAll() {
 // ── Shake ─────────────────────────────────────────────────────────────────────
 function shake(el) {
   el.animate([
-    {transform:'translateX(0)'},{transform:'translateX(-7px)'},
-    {transform:'translateX(7px)'},{transform:'translateX(-4px)'},
-    {transform:'translateX(4px)'},{transform:'translateX(0)'}
+    { transform: 'translateX(0)' }, { transform: 'translateX(-7px)' },
+    { transform: 'translateX(7px)' }, { transform: 'translateX(-4px)' },
+    { transform: 'translateX(4px)' }, { transform: 'translateX(0)' }
   ], { duration: 320, easing: 'ease-in-out' });
 }
 
@@ -477,7 +476,7 @@ document.querySelectorAll('.speed-btn').forEach(btn =>
 
 // ── Buttons ───────────────────────────────────────────────────────────────────
 $encodeBtn.addEventListener('click', runPipeline);
-$clearBtn .addEventListener('click', resetAll);
+$clearBtn.addEventListener('click', resetAll);
 $inputText.addEventListener('keydown', e => { if (e.key === 'Enter' && e.ctrlKey) runPipeline(); });
 
 // ── Init ──────────────────────────────────────────────────────────────────────

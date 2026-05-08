@@ -7,10 +7,6 @@
   <title>EncodeLab</title>
   <meta name="description"
     content="Build multi-layer encoding pipelines with Base32, Base45, Base58, Base62, Base64, Base85, Binary, Hex, ASCII, ROT13, ROT47 — visualized step by step." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
-    rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -27,7 +23,7 @@
         <!-- <span class="logo-icon">⬡</span> -->
         <span class="logo-text">Encode<span class="accent">Lab</span></span>
       </div>
-      <p class="header-subtitle">Data Encoding Visualization for Beginners</p>
+      <p class="header-subtitle">Step-by-step encoding, made clear</p>
     </div>
   </header>
 
@@ -71,8 +67,7 @@
         Type or paste your input text
         <span class="card-hint">This is the raw text that will be encoded</span>
       </div>
-      <textarea id="inputText" class="input-field" placeholder="e.g. Hello World" rows="2"
-        spellcheck="false">Hello World</textarea>
+      <textarea id="inputText" class="input-field" placeholder="e.g. Hello" rows="2" spellcheck="false">Hello</textarea>
     </section>
 
     <!-- ══ STEP 2 — BUILD PIPELINE ══ -->
@@ -87,14 +82,13 @@
       <div class="instruction-box">
         <span class="instruction-icon">👆</span>
         <div class="instruction-text">
-          <strong>Click any encoder below</strong> to add it as a layer.
-          You can add multiple layers — even the same encoder twice.
-          Use <kbd>↑</kbd> <kbd>↓</kbd> to reorder and <kbd>✕</kbd> to remove a layer.
+          <strong>Select an encoder</strong> to add it as a layer.
+          Build a simple pipeline, reorder layers with <kbd>↑</kbd> <kbd>↓</kbd>, or remove one with <kbd>✕</kbd>.
         </div>
       </div>
 
       <!-- Encoder chips -->
-      <div class="chips-label">Available Encoders — click to add</div>
+      <div class="chips-label">Available Encoders</div>
       <div class="encoder-grid" id="encoderGrid"></div>
 
       <!-- Layer queue -->
@@ -135,9 +129,9 @@
         </div>
         <div class="run-btns">
           <button id="encodeBtn" class="btn btn-primary" disabled>
-            ▶&nbsp; Run Pipeline
+            Run Pipeline
           </button>
-          <button id="clearBtn" class="btn btn-ghost">↺ Reset All</button>
+          <button id="clearBtn" class="btn btn-ghost">Reset</button>
         </div>
       </div>
     </section>
@@ -177,12 +171,12 @@
         <!-- Final output -->
         <div class="final-block">
           <div class="final-block-label">
-            🏁 Final Encoded Output
+            Final Encoded Output
             <span class="final-block-hint">— after all layers have been applied</span>
           </div>
           <div class="final-output-row">
             <div class="final-output-text" id="finalOutputText"></div>
-            <button class="copy-btn" id="copyBtn">⎘ Copy</button>
+            <button class="copy-btn" id="copyBtn">Copy</button>
           </div>
         </div>
       </div>
@@ -198,7 +192,7 @@
   </main>
 
   <footer>
-    <p>EncodeLab &copy; 2026 — Data Encoding Visualization for Beginners</p>
+    <p>EncodeLab &copy; 2026 — Step-by-step encoding, made clear</p>
   </footer>
 
   <script src="encoders.js"></script>
