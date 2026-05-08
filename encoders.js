@@ -617,17 +617,178 @@ function encodeBase85(input) {
   return { output, steps };
 }
 
+// ── Decoders ──────────────────────────────────────────────────────────────────
+function decodeASCII(input) {
+  const steps = [];
+  steps.push({ title: 'ASCII Decoding', explanation: 'Convert each space-separated decimal number back to its ASCII character.', data: [{ key: 'Input', value: input, type: 'plain' }] });
+  const parts = input.trim().split(/\s+/).filter(Boolean);
+  const chars = parts.map(p => String.fromCharCode(parseInt(p, 10) || 0));
+  const output = chars.join('');
+  steps.push({ title: 'Decimal → Character', explanation: 'Each decimal number maps to an ASCII character.', charBlocks: parts.map((p, i) => ({ top: p, bottom: chars[i], type: 'normal' })) });
+  return { output, steps };
+}
+
+function decodeBinary(input) {
+  const steps = [];
+  steps.push({ title: 'Binary Decoding', explanation: 'Group the binary sequence into 8-bit bytes and convert each byte to its ASCII character.', data: [{ key: 'Input', value: input, type: 'plain' }] });
+  const clean = input.replace(/\s+/g, '');
+  const bytes = splitInto(clean, 8);
+  const chars = bytes.map(b => String.fromCharCode(parseInt(b, 2) || 0));
+  const output = chars.join('');
+  steps.push({ title: '8-bit Binary → Character', explanation: 'Parse each 8-bit group into a decimal number, then to a character.', charBlocks: bytes.map((b, i) => ({ top: b, bottom: chars[i], type: 'normal' })) });
+  return { output, steps };
+}
+
+function decodeHex(input) {
+  const steps = [];
+  const clean = input.replace(/\s+/g, '');
+  steps.push({ title: 'Hex Decoding', explanation: 'Every 2 hexadecimal digits represent 1 byte (8 bits). Convert each pair to an ASCII character.', data: [{ key: 'Input', value: input, type: 'plain' }] });
+  const pairs = splitInto(clean, 2);
+  const chars = pairs.map(p => String.fromCharCode(parseInt(p, 16) || 0));
+  const output = chars.join('');
+  steps.push({ title: 'Hex Pair → Character', explanation: 'Parse each hex pair into a decimal number, then to a character.', charBlocks: pairs.map((p, i) => ({ top: p, bottom: chars[i], type: 'normal' })) });
+  return { output, steps };
+}
+
+function decodeROT13(input) {
+  const { output, steps } = encodeROT13(input);
+  steps[0].title = 'ROT13 Decoding';
+  steps[0].explanation = 'ROT13 is symmetric. Rotating by 13 again restores the original text.';
+  steps[steps.length - 1].title = 'Final ROT13 Decoded Output';
+  return { output, steps };
+}
+
+function decodeROT47(input) {
+  const { output, steps } = encodeROT47(input);
+  steps[0].title = 'ROT47 Decoding';
+  steps[0].explanation = 'ROT47 is symmetric. Rotating by 47 again restores the original text.';
+  steps[steps.length - 1].title = 'Final ROT47 Decoded Output';
+  return { output, steps };
+}
+
+function decodeBase64(input) {
+  const steps = [];
+  steps.push({ title: 'Base64 Decoding', explanation: 'Base64 characters are mapped back to their 6-bit values, grouped into 8-bit bytes, and converted to text.', data: [{ key: 'Input', value: input, type: 'plain' }] });
+  let output = '';
+  try { output = atob(input.replace(/\s+/g, '')); } catch(e) { output = '[Invalid Base64]'; }
+  steps.push({ title: 'Decode Result', explanation: 'Converted Base64 chars into bytes.', data: [{ key: 'Output', value: output, type: 'highlight' }] });
+  return { output, steps };
+}
+
+function decodeBase32(input) {
+  const steps = [];
+  steps.push({ title: 'Base32 Decoding', explanation: 'Map characters back to 5-bit groups, combine into 8-bit bytes.', data: [{ key: 'Input', value: input, type: 'plain' }] });
+  let clean = input.replace(/=+$/, '').toUpperCase();
+  let bits = '';
+  for (let i = 0; i < clean.length; i++) {
+    const val = B32_CHARS.indexOf(clean[i]);
+    if (val !== -1) bits += val.toString(2).padStart(5, '0');
+  }
+  let out = '';
+  for (let i = 0; i + 8 <= bits.length; i += 8) {
+    out += String.fromCharCode(parseInt(bits.slice(i, i+8), 2));
+  }
+  steps.push({ title: 'Decoded Result', data: [{ key: 'Output', value: out, type: 'highlight' }] });
+  return { output: out, steps };
+}
+
+function decodeBase58(input) {
+  const steps = [];
+  steps.push({ title: 'Base58 Decoding', explanation: 'Reverse the Base58 mapping and big integer math.', data: [{ key: 'Input', value: input, type: 'plain' }] });
+  let leadingZeros = 0;
+  for (let i = 0; i < input.length && input[i] === '1'; i++) leadingZeros++;
+  let digits = [0];
+  for (let i = leadingZeros; i < input.length; i++) {
+    const val = B58_CHARS.indexOf(input[i]);
+    if (val === -1) continue;
+    let carry = val;
+    for (let j = 0; j < digits.length; j++) {
+      carry += digits[j] * 58;
+      digits[j] = carry % 256;
+      carry = Math.floor(carry / 256);
+    }
+    while (carry > 0) { digits.push(carry % 256); carry = Math.floor(carry / 256); }
+  }
+  let out = '\0'.repeat(leadingZeros) + digits.reverse().map(b => String.fromCharCode(b)).join('');
+  steps.push({ title: 'Decoded Result', data: [{ key: 'Output', value: out, type: 'highlight' }] });
+  return { output: out, steps };
+}
+
+function decodeBase62(input) {
+  const steps = [];
+  steps.push({ title: 'Base62 Decoding', explanation: 'Reverse Base62 division.', data: [{ key: 'Input', value: input, type: 'plain' }] });
+  let digits = [0];
+  for (let i = 0; i < input.length; i++) {
+    const val = B62_CHARS.indexOf(input[i]);
+    if (val === -1) continue;
+    let carry = val;
+    for (let j = 0; j < digits.length; j++) {
+      carry += digits[j] * 62;
+      digits[j] = carry % 256;
+      carry = Math.floor(carry / 256);
+    }
+    while (carry > 0) { digits.push(carry % 256); carry = Math.floor(carry / 256); }
+  }
+  let out = digits.reverse().map(b => String.fromCharCode(b)).join('');
+  steps.push({ title: 'Decoded Result', data: [{ key: 'Output', value: out, type: 'highlight' }] });
+  return { output: out, steps };
+}
+
+function decodeBase45(input) {
+  const steps = [];
+  steps.push({ title: 'Base45 Decoding', explanation: '3 chars -> 2 bytes, 2 chars -> 1 byte.', data: [{ key: 'Input', value: input, type: 'plain' }] });
+  let out = '';
+  for (let i = 0; i < input.length; i += 3) {
+    if (i + 2 < input.length) {
+      const c = B45_CHARS.indexOf(input[i]);
+      const b = B45_CHARS.indexOf(input[i+1]);
+      const a = B45_CHARS.indexOf(input[i+2]);
+      const n = c + b * 45 + a * 2025;
+      out += String.fromCharCode(Math.floor(n / 256)) + String.fromCharCode(n % 256);
+    } else if (i + 1 < input.length) {
+      const d = B45_CHARS.indexOf(input[i]);
+      const e = B45_CHARS.indexOf(input[i+1]);
+      const n = d + e * 45;
+      out += String.fromCharCode(n);
+    }
+  }
+  steps.push({ title: 'Decoded Result', data: [{ key: 'Output', value: out, type: 'highlight' }] });
+  return { output: out, steps };
+}
+
+function decodeBase85(input) {
+  const steps = [];
+  steps.push({ title: 'Base85 Decoding', explanation: '5 chars -> 4 bytes.', data: [{ key: 'Input', value: input, type: 'plain' }] });
+  let clean = input.replace(/\s+/g, '');
+  let out = '';
+  for (let i = 0; i < clean.length; i += 5) {
+    const chunk = clean.slice(i, i + 5);
+    const padLen = 5 - chunk.length;
+    const padded = chunk + 'u'.repeat(padLen);
+    let n = 0;
+    for (let j = 0; j < 5; j++) {
+      n = n * 85 + (padded.charCodeAt(j) - 33);
+    }
+    out += String.fromCharCode(Math.floor(n / 16777216) % 256);
+    if (padLen < 3) out += String.fromCharCode(Math.floor(n / 65536) % 256);
+    if (padLen < 2) out += String.fromCharCode(Math.floor(n / 256) % 256);
+    if (padLen < 1) out += String.fromCharCode(n % 256);
+  }
+  steps.push({ title: 'Decoded Result', data: [{ key: 'Output', value: out, type: 'highlight' }] });
+  return { output: out, steps };
+}
+
 // ── Registry ──────────────────────────────────────────────────────────────────
 const ENCODERS = {
-  ascii: { label: 'ASCII', desc: 'Chars → decimal codes 0–127', fn: encodeASCII },
-  binary: { label: 'Binary', desc: 'Chars → 8-bit 0/1 representation', fn: encodeBinary },
-  hex: { label: 'Hex', desc: 'Bytes → 2-digit hex pairs', fn: encodeHex },
-  rot13: { label: 'ROT13', desc: 'A–Z rotated by 13 positions', fn: encodeROT13 },
-  rot47: { label: 'ROT47', desc: '!–~ all printable chars rotated 47', fn: encodeROT47 },
-  base32: { label: 'Base32', desc: '5-bit groups → A–Z 2–7 alphabet', fn: encodeBase32 },
-  base45: { label: 'Base45', desc: '2 bytes → 3 chars (QR codes)', fn: encodeBase45 },
-  base58: { label: 'Base58', desc: 'Bitcoin-safe, no 0/O/I/l chars', fn: encodeBase58 },
-  base62: { label: 'Base62', desc: '0–9 A–Z a–z, URL-safe compact IDs', fn: encodeBase62 },
-  base64: { label: 'Base64', desc: '3 bytes → 4 chars, A–Z a–z 0–9+/', fn: encodeBase64 },
-  base85: { label: 'Base85', desc: '4 bytes → 5 chars, ~25% overhead', fn: encodeBase85 },
+  ascii: { label: 'ASCII', desc: 'Chars → decimal codes 0–127', fn: encodeASCII, decodeFn: decodeASCII },
+  binary: { label: 'Binary', desc: 'Chars → 8-bit 0/1 representation', fn: encodeBinary, decodeFn: decodeBinary },
+  hex: { label: 'Hex', desc: 'Bytes → 2-digit hex pairs', fn: encodeHex, decodeFn: decodeHex },
+  rot13: { label: 'ROT13', desc: 'A–Z rotated by 13 positions', fn: encodeROT13, decodeFn: decodeROT13 },
+  rot47: { label: 'ROT47', desc: '!–~ all printable chars rotated 47', fn: encodeROT47, decodeFn: decodeROT47 },
+  base32: { label: 'Base32', desc: '5-bit groups → A–Z 2–7 alphabet', fn: encodeBase32, decodeFn: decodeBase32 },
+  base45: { label: 'Base45', desc: '2 bytes → 3 chars (QR codes)', fn: encodeBase45, decodeFn: decodeBase45 },
+  base58: { label: 'Base58', desc: 'Bitcoin-safe, no 0/O/I/l chars', fn: encodeBase58, decodeFn: decodeBase58 },
+  base62: { label: 'Base62', desc: '0–9 A–Z a–z, URL-safe compact IDs', fn: encodeBase62, decodeFn: decodeBase62 },
+  base64: { label: 'Base64', desc: '3 bytes → 4 chars, A–Z a–z 0–9+/', fn: encodeBase64, decodeFn: decodeBase64 },
+  base85: { label: 'Base85', desc: '4 bytes → 5 chars, ~25% overhead', fn: encodeBase85, decodeFn: decodeBase85 },
 };

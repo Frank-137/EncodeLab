@@ -8,6 +8,7 @@
   <meta name="description"
     content="Build multi-layer encoding pipelines with Base32, Base45, Base58, Base62, Base64, Base85, Binary, Hex, ASCII, ROT13, ROT47 — visualized step by step." />
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="logo.png">
 </head>
 
 <body>
@@ -64,19 +65,26 @@
     <section class="card">
       <div class="card-step-label">
         <span class="step-dot">1</span>
-        Type or Paste your input text
-        <span class="card-hint">This is the raw text that will be encoded</span>
+        <span id="step1Title">Type or Paste your input text</span>
+        <span class="card-hint" id="step1Hint">This is the raw text that will be encoded</span>
       </div>
       <textarea id="inputText" class="input-field" placeholder="e.g. Hello" rows="2" spellcheck="false">Hello</textarea>
     </section>
 
     <!-- ══ STEP 2 — BUILD PIPELINE ══ -->
     <section class="card">
-      <div class="card-step-label">
-        <span class="step-dot">2</span>
-        Choose your encoding layers
-        <span class="card-hint">Each encoder's output becomes the next layer's input</span>
+      <div class="card-step-label" style="justify-content: space-between;">
+        <div style="display:flex; align-items:center; gap:12px">
+          <span class="step-dot">2</span>
+          <span id="step2Title">Choose your Encoding Layers</span>
+        </div>
+        <div class="mode-toggle">
+          <button id="modeEncodeBtn" class="mode-btn active">Encode</button>
+          <button id="modeDecodeBtn" class="mode-btn">Decode</button>
+        </div>
       </div>
+      <div class="card-hint" id="step2Hint" style="margin-bottom: 20px;">Each encoder's output becomes the next layer's
+        input</div>
 
       <!-- Instruction callout -->
       <div class="instruction-box">
@@ -88,7 +96,7 @@
       </div>
 
       <!-- Encoder chips -->
-      <div class="chips-label">Available Encoders</div>
+      <div class="chips-label" id="chipsLabel">Available Encoders</div>
       <div class="encoder-grid" id="encoderGrid"></div>
 
       <!-- Layer queue -->
@@ -110,7 +118,7 @@
       <div class="run-left">
         <div class="card-step-label" style="margin-bottom:.3rem">
           <span class="step-dot">3</span>
-          Run the Pipeline
+          <span id="step3Title">Run the Pipeline</span>
         </div>
         <p class="run-hint">
           Each layer transforms the text, then passes the result to the next layer.

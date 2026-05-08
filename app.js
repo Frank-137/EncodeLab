@@ -17,6 +17,7 @@ const LAYER_COLORS = [
 const layerColor = i => LAYER_COLORS[i % LAYER_COLORS.length];
 
 // ── State ─────────────────────────────────────────────────────────────────────
+let currentMode = 'encode'; // 'encode' | 'decode'
 let layers = [];   // [{ key, uid }]  — ordered list
 let animSpeed = 500;
 let animTimers = [];
@@ -35,6 +36,16 @@ const $summaryBody = document.getElementById('summaryBody');
 const $queueEmpty = document.getElementById('queueEmpty');
 const $queueList = document.getElementById('queueList');
 const $queueCount = document.getElementById('queueCountLabel');
+
+// Texts and Modes
+const $modeEncodeBtn = document.getElementById('modeEncodeBtn');
+const $modeDecodeBtn = document.getElementById('modeDecodeBtn');
+const $step1Title = document.getElementById('step1Title');
+const $step1Hint = document.getElementById('step1Hint');
+const $step2Title = document.getElementById('step2Title');
+const $step2Hint = document.getElementById('step2Hint');
+const $chipsLabel = document.getElementById('chipsLabel');
+const $step3Title = document.getElementById('step3Title');
 
 // ── Build encoder chips ───────────────────────────────────────────────────────
 function buildChips() {
@@ -107,7 +118,8 @@ function renderQueue() {
   }
   $queueEmpty.classList.add('hidden');
   if ($queueCount) {
-    const names = layers.map(({ key }, i) => `L${i + 1}:${ENCODERS[key].label}`).join(' → ');
+    const action = currentMode === 'encode' ? 'Encoder' : 'Decoder';
+    const names = layers.map(({ key }, i) => `L${i + 1}:${ENCODERS[key].label} ${action}`).join(' → ');
     $queueCount.textContent = `${layers.length} layer${layers.length > 1 ? 's' : ''} — ${names}`;
   }
 
@@ -181,8 +193,9 @@ function renderSummary(rawInput, results) {
 
   results.forEach((r, i) => {
     const color = layerColor(i);
+    const encName = currentMode === 'encode' ? ENCODERS[r.key].label : ENCODERS[r.key].label + ' Decode';
     $summaryBody.appendChild(
-      makeSumRow(`L${i + 1}`, ENCODERS[r.key].label, r.input, r.output, r.output.length, color, r.input.length)
+      makeSumRow(`L${i + 1}`, encName, r.input, r.output, r.output.length, color, r.input.length)
     );
   });
 }
@@ -309,7 +322,8 @@ function buildLayerPanel(li, key, inp, steps, out) {
 
   const info = document.createElement('div'); info.className = 'layer-header-info';
   const t = document.createElement('div'); t.className = 'layer-header-title'; t.style.color = color;
-  t.textContent = enc.label + ' — Layer ' + (li + 1);
+  const actionName = currentMode === 'encode' ? ENCODERS[key].label : ENCODERS[key].label + ' Decode';
+  t.textContent = actionName + ' — Layer ' + (li + 1);
   const sub = document.createElement('div'); sub.className = 'layer-header-subtitle';
   sub.innerHTML =
     `<span class="layer-header-in">"${escHtml(trim(inp))}"</span>` +
@@ -370,7 +384,7 @@ function runPipeline() {
   let cur = raw;
   for (const { key } of layers) {
     let res;
-    try { res = ENCODERS[key].fn(cur); }
+    try { res = currentMode === 'encode' ? ENCODERS[key].fn(cur) : ENCODERS[key].decodeFn(cur); }
     catch (e) { res = { output: `[Error: ${e.message}]`, steps: [{ title: 'Error', explanation: e.message, data: [] }] }; }
     results.push({ key, input: cur, output: res.output, steps: res.steps });
     cur = res.output;
@@ -473,6 +487,39 @@ document.querySelectorAll('.speed-btn').forEach(btn =>
     animSpeed = parseInt(btn.dataset.speed);
   })
 );
+
+// ── Mode Toggle ───────────────────────────────────────────────────────────────
+function setMode(mode) {
+  if (currentMode === mode) return;
+  currentMode = mode;
+  
+  if (mode === 'encode') {
+    $modeEncodeBtn.classList.add('active');
+    $modeDecodeBtn.classList.remove('active');
+    $step1Title.textContent = 'Type or Paste your input text';
+    $step1Hint.textContent = 'This is the raw text that will be encoded';
+    $step2Title.textContent = 'Choose your encoding layers';
+    $step2Hint.textContent = "Each encoder's output becomes the next layer's input";
+    $chipsLabel.textContent = 'Available Encoders';
+    $step3Title.textContent = 'Run the Pipeline';
+    $encodeBtn.textContent = 'Run Pipeline';
+  } else {
+    $modeDecodeBtn.classList.add('active');
+    $modeEncodeBtn.classList.remove('active');
+    $step1Title.textContent = 'Type or Paste the text to decode';
+    $step1Hint.textContent = 'This is the encoded text that you want to decode';
+    $step2Title.textContent = 'Choose your decoding layers';
+    $step2Hint.textContent = "Each decoder's output becomes the next layer's input";
+    $chipsLabel.textContent = 'Available Decoders';
+    $step3Title.textContent = 'Run Decode Pipeline';
+    $encodeBtn.textContent = 'Run Decode Pipeline';
+  }
+  
+  resetAll();
+}
+
+$modeEncodeBtn.addEventListener('click', () => setMode('encode'));
+$modeDecodeBtn.addEventListener('click', () => setMode('decode'));
 
 // ── Buttons ───────────────────────────────────────────────────────────────────
 $encodeBtn.addEventListener('click', runPipeline);
