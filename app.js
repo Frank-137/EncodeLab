@@ -11,8 +11,7 @@
 
 // ── Color palette (one per layer) ─────────────────────────────────────────────
 const LAYER_COLORS = [
-  '#0071E3', '#006EDB', '#0077ED', '#1D1D1F',
-  '#333336', '#6E6E73', '#0076DF', '#272729'
+  '#0071E3'
 ];
 const layerColor = i => LAYER_COLORS[i % LAYER_COLORS.length];
 
@@ -62,6 +61,15 @@ function buildChips() {
 
 // ── Layer management ──────────────────────────────────────────────────────────
 function addLayer(key) {
+  if (layers.length >= 15) {
+    shake($encoderGrid);
+    const baseText = currentMode === 'encode' ? 'Available Encoders' : 'Available Decoders';
+    $chipsLabel.innerHTML = baseText + ' <span style="color:#d70015; font-weight:600">— Max limit reached!</span>';
+    setTimeout(() => {
+      if (layers.length >= 15) $chipsLabel.innerHTML = baseText;
+    }, 2000);
+    return;
+  }
   layers.push({ key, uid: uidSeq++ });
   render();
 }
