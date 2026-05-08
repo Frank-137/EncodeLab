@@ -33,7 +33,7 @@ function encodeASCII(input) {
   for (let i = 0; i < input.length; i++) {
     const c = input[i];
     const code = c.charCodeAt(0);
-    rows.push({ char: c, dec: code, hex: code.toString(16).toUpperCase().padStart(2,'0'), oct: code.toString(8), bin: code.toString(2).padStart(8,'0') });
+    rows.push({ char: c, dec: code, hex: code.toString(16).toUpperCase().padStart(2, '0'), oct: code.toString(8), bin: code.toString(2).padStart(8, '0') });
   }
 
   steps.push({
@@ -50,7 +50,7 @@ function encodeASCII(input) {
     explanation: 'The decimal ASCII values joined by spaces form the encoded output.',
     data: [
       { key: 'Decimal', value: output, type: 'highlight' },
-      { key: 'Hex', value: input.split('').map(c=>c.charCodeAt(0).toString(16).toUpperCase().padStart(2,'0')).join(' '), type: 'accent' }
+      { key: 'Hex', value: input.split('').map(c => c.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0')).join(' '), type: 'accent' }
     ]
   });
 
@@ -114,7 +114,7 @@ function encodeHex(input) {
   const charData = input.split('').map(c => ({
     char: c, code: c.charCodeAt(0),
     bits: charToBits(c),
-    hex: c.charCodeAt(0).toString(16).toUpperCase().padStart(2,'0')
+    hex: c.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0')
   }));
 
   steps.push({
@@ -128,7 +128,7 @@ function encodeHex(input) {
     title: 'Binary → Hex Nibbles',
     explanation: 'Split each 8-bit byte into two 4-bit nibbles. Each nibble maps to a single hex digit (0–F).',
     data: charData.map(d => ({
-      key: d.bits, value: `${d.bits.slice(0,4)} ${d.bits.slice(4)} → ${d.hex[0]} ${d.hex[1]}`, type: 'accent'
+      key: d.bits, value: `${d.bits.slice(0, 4)} ${d.bits.slice(4)} → ${d.hex[0]} ${d.hex[1]}`, type: 'accent'
     }))
   });
 
@@ -139,7 +139,7 @@ function encodeHex(input) {
     explanation: 'All hex pairs concatenated.',
     data: [
       { key: 'Hex', value: output, type: 'highlight' },
-      { key: 'Spaced', value: charData.map(d=>d.hex).join(' '), type: 'accent' }
+      { key: 'Spaced', value: charData.map(d => d.hex).join(' '), type: 'accent' }
     ]
   });
 
@@ -241,14 +241,14 @@ function encodeBase64(input) {
   });
 
   const bytes = input.split('').map(c => c.charCodeAt(0));
-  const bitStr = bytes.map(b => b.toString(2).padStart(8,'0')).join('');
+  const bitStr = bytes.map(b => b.toString(2).padStart(8, '0')).join('');
 
   steps.push({
     title: 'Step 1 — Convert to Binary',
     explanation: 'Convert each character to its 8-bit ASCII binary representation.',
     bits: bitStr,
     data: bytes.map((b, i) => ({
-      key: `'${input[i]}'`, value: `${b} → ${b.toString(2).padStart(8,'0')}`, type: 'accent'
+      key: `'${input[i]}'`, value: `${b} → ${b.toString(2).padStart(8, '0')}`, type: 'accent'
     }))
   });
 
@@ -269,18 +269,18 @@ function encodeBase64(input) {
     title: 'Step 3 — Split into 6-bit Groups',
     explanation: 'Group the bit stream into 6-bit chunks (pad with zeros if necessary). Each 6-bit group represents a number 0–63.',
     data: sixBitGroups.map((g, i) => ({
-      key: `Group ${i+1}`, value: `${g} = ${parseInt(g,2)}`, type: 'accent'
+      key: `Group ${i + 1}`, value: `${g} = ${parseInt(g, 2)}`, type: 'accent'
     }))
   });
 
   // Map to characters
-  const b64chars = sixBitGroups.map(g => B64_CHARS[parseInt(g,2)]);
+  const b64chars = sixBitGroups.map(g => B64_CHARS[parseInt(g, 2)]);
 
   steps.push({
     title: 'Step 4 — Map to Base64 Alphabet',
     explanation: `Look up each 6-bit value in the Base64 alphabet table: "${B64_CHARS}"`,
     data: sixBitGroups.map((g, i) => ({
-      key: `${parseInt(g,2).toString().padStart(2,' ')} (${g})`, value: `→ '${b64chars[i]}'`, type: 'highlight'
+      key: `${parseInt(g, 2).toString().padStart(2, ' ')} (${g})`, value: `→ '${b64chars[i]}'`, type: 'highlight'
     }))
   });
 
@@ -318,13 +318,13 @@ function encodeBase32(input) {
   });
 
   const bytes = input.split('').map(c => c.charCodeAt(0));
-  const bitStr = bytes.map(b => b.toString(2).padStart(8,'0')).join('');
+  const bitStr = bytes.map(b => b.toString(2).padStart(8, '0')).join('');
 
   steps.push({
     title: 'Step 1 — Convert to Binary',
     explanation: 'Convert each character to 8-bit binary.',
     bits: bitStr,
-    data: bytes.map((b,i) => ({ key: `'${input[i]}'`, value: `${b} → ${b.toString(2).padStart(8,'0')}`, type: 'accent' }))
+    data: bytes.map((b, i) => ({ key: `'${input[i]}'`, value: `${b} → ${b.toString(2).padStart(8, '0')}`, type: 'accent' }))
   });
 
   const padded = bitStr.padEnd(Math.ceil(bitStr.length / 5) * 5, '0');
@@ -333,13 +333,13 @@ function encodeBase32(input) {
   steps.push({
     title: 'Step 2 — Split into 5-bit Groups',
     explanation: 'Group bits into 5-bit chunks. Each maps to a value 0–31.',
-    data: fiveBitGroups.map((g,i) => ({
-      key: `Group ${i+1}`, value: `${g} = ${parseInt(g,2)} → '${B32_CHARS[parseInt(g,2)]}'`, type: 'accent'
+    data: fiveBitGroups.map((g, i) => ({
+      key: `Group ${i + 1}`, value: `${g} = ${parseInt(g, 2)} → '${B32_CHARS[parseInt(g, 2)]}'`, type: 'accent'
     }))
   });
 
   // Build output with padding (output must be multiple of 8)
-  let raw = fiveBitGroups.map(g => B32_CHARS[parseInt(g,2)]).join('');
+  let raw = fiveBitGroups.map(g => B32_CHARS[parseInt(g, 2)]).join('');
   const rem = raw.length % 8;
   const padded32 = rem === 0 ? raw : raw + '='.repeat(8 - rem);
 
@@ -381,7 +381,7 @@ function encodeBase58(input) {
   steps.push({
     title: 'Step 1 — Convert to Integer',
     explanation: 'Treat the entire byte sequence as a big-endian integer.',
-    data: bytes.map((b,i) => ({ key: `byte[${i}] '${input[i]}'`, value: `0x${b.toString(16).toUpperCase().padStart(2,'0')} = ${b}`, type: 'accent' }))
+    data: bytes.map((b, i) => ({ key: `byte[${i}] '${input[i]}'`, value: `0x${b.toString(16).toUpperCase().padStart(2, '0')} = ${b}`, type: 'accent' }))
   });
 
   // Big number arithmetic
@@ -402,7 +402,7 @@ function encodeBase58(input) {
   steps.push({
     title: 'Step 2 — Repeated Division by 58',
     explanation: 'Divide the integer by 58 repeatedly, collecting remainders. Each remainder maps to a Base58 char.',
-    data: digits.slice().reverse().map((d,i) => ({ key: `remainder[${i}]`, value: `${d} → '${B58_CHARS[d]}'`, type: 'accent' }))
+    data: digits.slice().reverse().map((d, i) => ({ key: `remainder[${i}]`, value: `${d} → '${B58_CHARS[d]}'`, type: 'accent' }))
   });
 
   const result = '1'.repeat(leadingZeros) + digits.reverse().map(d => B58_CHARS[d]).join('');
@@ -436,7 +436,7 @@ function encodeBase62(input) {
   steps.push({
     title: 'Step 1 — Bytes to Big Integer',
     explanation: 'Convert the byte array to a large integer (big-endian).',
-    data: bytes.map((b,i) => ({ key: `byte[${i}] '${input[i]}'`, value: `${b}`, type: 'accent' }))
+    data: bytes.map((b, i) => ({ key: `byte[${i}] '${input[i]}'`, value: `${b}`, type: 'accent' }))
   });
 
   let digits = [0];
@@ -456,7 +456,7 @@ function encodeBase62(input) {
   steps.push({
     title: 'Step 2 — Divide by 62 Repeatedly',
     explanation: 'Divide the integer by 62, collect remainders (in reverse order = result).',
-    data: digits.slice().reverse().map((d,i) => ({ key: `quotient[${i}]`, value: `${d} → '${B62_CHARS[d]}'`, type: 'accent' }))
+    data: digits.slice().reverse().map((d, i) => ({ key: `quotient[${i}]`, value: `${d} → '${B62_CHARS[d]}'`, type: 'accent' }))
   });
 
   const result = digits.reverse().map(d => B62_CHARS[d]).join('');
@@ -492,11 +492,11 @@ function encodeBase45(input) {
 
   for (let i = 0; i < bytes.length; i += 2) {
     if (i + 1 < bytes.length) {
-      const n = bytes[i] * 256 + bytes[i+1];
+      const n = bytes[i] * 256 + bytes[i + 1];
       const c = n % 45;
       const b = Math.floor(n / 45) % 45;
       const a = Math.floor(n / 2025);
-      groupDetails.push({ bytes: [bytes[i], bytes[i+1]], chars: [input[i], input[i+1]], n, triple: [c, b, a], enc: [B45_CHARS[c], B45_CHARS[b], B45_CHARS[a]] });
+      groupDetails.push({ bytes: [bytes[i], bytes[i + 1]], chars: [input[i], input[i + 1]], n, triple: [c, b, a], enc: [B45_CHARS[c], B45_CHARS[b], B45_CHARS[a]] });
       encoded += B45_CHARS[c] + B45_CHARS[b] + B45_CHARS[a];
     } else {
       const n = bytes[i];
@@ -510,8 +510,8 @@ function encodeBase45(input) {
   steps.push({
     title: 'Step 1 — Pair Bytes',
     explanation: 'Group bytes in pairs. Two bytes = one 16-bit number (value = byte1×256 + byte2).',
-    data: groupDetails.map((g,i) => ({
-      key: `Pair ${i+1}`,
+    data: groupDetails.map((g, i) => ({
+      key: `Pair ${i + 1}`,
       value: g.bytes.length === 2
         ? `'${g.chars[0]}'(${g.bytes[0]}) + '${g.chars[1]}'(${g.bytes[1]}) × 256 = ${g.n}`
         : `'${g.chars[0]}'(${g.bytes[0]}) = ${g.n}`,
@@ -522,9 +522,9 @@ function encodeBase45(input) {
   steps.push({
     title: 'Step 2 — Divide by 45',
     explanation: 'For each number n: c = n mod 45, b = (n÷45) mod 45, a = n÷2025',
-    data: groupDetails.map((g,i) => ({
-      key: `Group ${i+1} (${g.n})`,
-      value: g.triple.map((v,j) => `div${j}: ${v}→'${g.enc[j]}'`).join('  '),
+    data: groupDetails.map((g, i) => ({
+      key: `Group ${i + 1} (${g.n})`,
+      value: g.triple.map((v, j) => `div${j}: ${v}→'${g.enc[j]}'`).join('  '),
       type: 'highlight'
     }))
   });
@@ -559,7 +559,7 @@ function encodeBase85(input) {
 
   const groups = [];
   for (let i = 0; i < bytes.length; i += 4) {
-    const g = bytes.slice(i, i+4);
+    const g = bytes.slice(i, i + 4);
     groups.push(g);
   }
 
@@ -567,8 +567,8 @@ function encodeBase85(input) {
     title: 'Step 1 — Group into 4-byte Chunks',
     explanation: 'Pad input to multiple of 4 bytes (with null bytes), then split into groups of 4.',
     data: groups.map((g, i) => ({
-      key: `Group ${i+1}`,
-      value: g.map((b,j) => `b${j}:${b}(0x${b.toString(16).toUpperCase().padStart(2,'0')})`).join(' '),
+      key: `Group ${i + 1}`,
+      value: g.map((b, j) => `b${j}:${b}(0x${b.toString(16).toUpperCase().padStart(2, '0')})`).join(' '),
       type: 'accent'
     }))
   });
@@ -589,8 +589,8 @@ function encodeBase85(input) {
     title: 'Step 2 — Convert 4 Bytes to 32-bit Integer',
     explanation: 'Combine 4 bytes into one 32-bit unsigned integer: n = b0×85³ ... etc.',
     data: groupEncoded.map((g, i) => ({
-      key: `Group ${i+1}`,
-      value: `n = ${g.n} (0x${g.n.toString(16).toUpperCase().padStart(8,'0')})`,
+      key: `Group ${i + 1}`,
+      value: `n = ${g.n} (0x${g.n.toString(16).toUpperCase().padStart(8, '0')})`,
       type: 'accent'
     }))
   });
@@ -599,7 +599,7 @@ function encodeBase85(input) {
     title: 'Step 3 — Divide by Powers of 85',
     explanation: 'For each group: divide n by 85⁴, 85³, 85², 85, 1 to get 5 digits. Add 33 (ASCII "!") to each.',
     data: groupEncoded.map((g, i) => ({
-      key: `Group ${i+1} (${g.n})`, value: `→ "${g.chars}"`, type: 'highlight'
+      key: `Group ${i + 1} (${g.n})`, value: `→ "${g.chars}"`, type: 'highlight'
     }))
   });
 
@@ -619,15 +619,15 @@ function encodeBase85(input) {
 
 // ── Registry ──────────────────────────────────────────────────────────────────
 const ENCODERS = {
-  ascii:   { label: 'ASCII',   desc: 'Chars → decimal codes 0–127',       fn: encodeASCII  },
-  binary:  { label: 'Binary',  desc: 'Chars → 8-bit 0/1 representation',  fn: encodeBinary },
-  hex:     { label: 'Hex',     desc: 'Bytes → 2-digit hex pairs',          fn: encodeHex    },
-  rot13:   { label: 'ROT13',   desc: 'A–Z rotated by 13 positions',        fn: encodeROT13  },
-  rot47:   { label: 'ROT47',   desc: '!–~ all printable chars rotated 47', fn: encodeROT47  },
-  base32:  { label: 'Base32',  desc: '5-bit groups → A–Z 2–7 alphabet',   fn: encodeBase32 },
-  base45:  { label: 'Base45',  desc: '2 bytes → 3 chars (QR codes)',       fn: encodeBase45 },
-  base58:  { label: 'Base58',  desc: 'Bitcoin-safe, no 0/O/I/l chars',    fn: encodeBase58 },
-  base62:  { label: 'Base62',  desc: '0–9 A–Z a–z, URL-safe compact IDs', fn: encodeBase62 },
-  base64:  { label: 'Base64',  desc: '3 bytes → 4 chars, A–Z a–z 0–9+/', fn: encodeBase64 },
-  base85:  { label: 'Base85',  desc: '4 bytes → 5 chars, ~25% overhead',  fn: encodeBase85 },
+  ascii: { label: 'ASCII', desc: 'Chars → decimal codes 0–127', fn: encodeASCII },
+  binary: { label: 'Binary', desc: 'Chars → 8-bit 0/1 representation', fn: encodeBinary },
+  hex: { label: 'Hex', desc: 'Bytes → 2-digit hex pairs', fn: encodeHex },
+  rot13: { label: 'ROT13', desc: 'A–Z rotated by 13 positions', fn: encodeROT13 },
+  rot47: { label: 'ROT47', desc: '!–~ all printable chars rotated 47', fn: encodeROT47 },
+  base32: { label: 'Base32', desc: '5-bit groups → A–Z 2–7 alphabet', fn: encodeBase32 },
+  base45: { label: 'Base45', desc: '2 bytes → 3 chars (QR codes)', fn: encodeBase45 },
+  base58: { label: 'Base58', desc: 'Bitcoin-safe, no 0/O/I/l chars', fn: encodeBase58 },
+  base62: { label: 'Base62', desc: '0–9 A–Z a–z, URL-safe compact IDs', fn: encodeBase62 },
+  base64: { label: 'Base64', desc: '3 bytes → 4 chars, A–Z a–z 0–9+/', fn: encodeBase64 },
+  base85: { label: 'Base85', desc: '4 bytes → 5 chars, ~25% overhead', fn: encodeBase85 },
 };
