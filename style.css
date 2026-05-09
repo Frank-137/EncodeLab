@@ -1365,3 +1365,40 @@ footer {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04), 0 0 1px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--border);
 }
+
+/* ============================================================
+   Language Toggle
+   ============================================================ */
+.lang-toggle {
+  display: flex;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.lang-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all var(--ease);
+  font-family: var(--font);
+}
+
+.lang-btn:hover:not(.active) {
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.lang-btn.active {
+  background: #fff;
+  color: var(--primary);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04), 0 0 1px rgba(0,0,0,0.1);
+  border: 1px solid var(--border);
+}

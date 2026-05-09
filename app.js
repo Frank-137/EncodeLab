@@ -36,7 +36,6 @@ const $queueEmpty = document.getElementById('queueEmpty');
 const $queueList = document.getElementById('queueList');
 const $queueCount = document.getElementById('queueCountLabel');
 
-// Texts and Modes
 const $modeEncodeBtn = document.getElementById('modeEncodeBtn');
 const $modeDecodeBtn = document.getElementById('modeDecodeBtn');
 const $step1Title = document.getElementById('step1Title');
@@ -45,6 +44,47 @@ const $step2Title = document.getElementById('step2Title');
 const $step2Hint = document.getElementById('step2Hint');
 const $chipsLabel = document.getElementById('chipsLabel');
 const $step3Title = document.getElementById('step3Title');
+
+// Language
+const $langEnBtn = document.getElementById('langEnBtn');
+const $langThBtn = document.getElementById('langThBtn');
+
+function updateLanguage() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    el.innerHTML = t(key);
+  });
+  
+  if (currentLang === 'en') {
+    $langEnBtn.classList.add('active');
+    $langThBtn.classList.remove('active');
+  } else {
+    $langThBtn.classList.add('active');
+    $langEnBtn.classList.remove('active');
+  }
+
+  if (currentMode === 'encode') {
+    $step1Title.textContent = t('step1TitleEncode');
+    $step1Hint.textContent = t('step1HintEncode');
+    $step2Title.textContent = t('step2TitleEncode');
+    $step2Hint.textContent = t('step2HintEncode');
+    $chipsLabel.textContent = t('chipsLabelEncode');
+    $step3Title.textContent = t('step3TitleEncode');
+    $encodeBtn.textContent = t('runBtnEncode');
+  } else {
+    $step1Title.textContent = t('step1TitleDecode');
+    $step1Hint.textContent = t('step1HintDecode');
+    $step2Title.textContent = t('step2TitleDecode');
+    $step2Hint.textContent = t('step2HintDecode');
+    $chipsLabel.textContent = t('chipsLabelDecode');
+    $step3Title.textContent = t('step3TitleDecode');
+    $encodeBtn.textContent = t('runBtnDecode');
+  }
+  
+  buildChips();
+  renderQueue();
+  if (results.length > 0) renderSummary();
+}
 
 // ── Build encoder chips ───────────────────────────────────────────────────────
 function buildChips() {
@@ -63,8 +103,8 @@ function buildChips() {
 function addLayer(key) {
   if (layers.length >= 15) {
     shake($encoderGrid);
-    const baseText = currentMode === 'encode' ? 'Available Encoders' : 'Available Decoders';
-    $chipsLabel.innerHTML = baseText + ' <span style="color:#d70015; font-weight:600">— Max limit reached!</span>';
+    const baseText = currentMode === 'encode' ? t('chipsLabelEncode') : t('chipsLabelDecode');
+    $chipsLabel.innerHTML = baseText + ' <span style="color:#d70015; font-weight:600">' + t('maxLimitReached') + '</span>';
     setTimeout(() => {
       if (layers.length >= 15) $chipsLabel.innerHTML = baseText;
     }, 2000);
@@ -102,7 +142,7 @@ function renderChips() {
     const count = layers.filter(l => l.key === key).length;
     if (count === 0) {
       chip.className = 'encoder-chip';
-      chip.textContent = ENCODERS[key].label;
+      chip.innerHTML = `<span class="chip-name">${t(ENCODERS[key].lKey || key)}</span><span class="chip-desc">${t(ENCODERS[key].dKey)}</span>`;
       chip.style.cssText = '';
     } else {
       const firstIdx = layers.findIndex(l => l.key === key);
@@ -110,7 +150,7 @@ function renderChips() {
       chip.className = 'encoder-chip selected';
       chip.style.cssText = `background:${color}20;border-color:${color}77;box-shadow:0 0 8px ${color}33`;
       chip.innerHTML =
-        ENCODERS[key].label +
+        t(ENCODERS[key].lKey || key) +
         `<span class="chip-count" style="background:${color}99">${count > 1 ? '×' + count : firstIdx + 1}</span>`;
     }
   });
@@ -126,9 +166,9 @@ function renderQueue() {
   }
   $queueEmpty.classList.add('hidden');
   if ($queueCount) {
-    const action = currentMode === 'encode' ? 'Encoder' : 'Decoder';
-    const names = layers.map(({ key }, i) => `L${i + 1}:${ENCODERS[key].label} ${action}`).join(' → ');
-    $queueCount.textContent = `${layers.length} layer${layers.length > 1 ? 's' : ''} — ${names}`;
+    const action = currentMode === 'encode' ? t('encoderSuffix') : t('decoderSuffix');
+    const names = layers.map(({ key }, i) => `L${i + 1}:${t(ENCODERS[key].lKey || key)} ${action}`).join(' → ');
+    $queueCount.textContent = `${layers.length} ${layers.length > 1 ? t('layersSuffix') : t('layerSuffix')} — ${names}`;
   }
 
   layers.forEach(({ key, uid }, i) => {
@@ -201,7 +241,7 @@ function renderSummary(rawInput, results) {
 
   results.forEach((r, i) => {
     const color = layerColor(i);
-    const encName = currentMode === 'encode' ? ENCODERS[r.key].label : ENCODERS[r.key].label + ' Decode';
+    const encName = currentMode === 'encode' ? t(ENCODERS[r.key].lKey || r.key) : t(ENCODERS[r.key].lKey || r.key) + ' ' + t('decoderSuffix');
     $summaryBody.appendChild(
       makeSumRow(`L${i + 1}`, encName, r.input, r.output, r.output.length, color, r.input.length)
     );
@@ -329,25 +369,25 @@ function buildLayerPanel(li, key, inp, steps, out) {
   badge.textContent = `L${li + 1}`;
 
   const info = document.createElement('div'); info.className = 'layer-header-info';
-  const t = document.createElement('div'); t.className = 'layer-header-title'; t.style.color = color;
-  const actionName = currentMode === 'encode' ? ENCODERS[key].label : ENCODERS[key].label + ' Decode';
-  t.textContent = actionName + ' — Layer ' + (li + 1);
+  const tDiv = document.createElement('div'); tDiv.className = 'layer-header-title'; tDiv.style.color = color;
+  const actionName = currentMode === 'encode' ? t(ENCODERS[key].lKey || key) : t(ENCODERS[key].lKey || key) + ' ' + t('decoderSuffix');
+  tDiv.textContent = actionName + ' — ' + t('layerSuffix') + ' ' + (li + 1);
   const sub = document.createElement('div'); sub.className = 'layer-header-subtitle';
   sub.innerHTML =
     `<span class="layer-header-in">"${escHtml(trim(inp))}"</span>` +
     ` <span style="color:var(--text-dim)">→</span> ` +
     `<span class="layer-header-out" style="color:${color}">"${escHtml(trim(out))}"</span>`;
-  info.appendChild(t); info.appendChild(sub);
+  info.appendChild(tDiv); info.appendChild(sub);
 
   // Right controls
   const right = document.createElement('div'); right.className = 'layer-header-right';
   const cpyBtn = document.createElement('button'); cpyBtn.className = 'layer-copy-btn';
-  cpyBtn.textContent = '⎘ Copy Output'; cpyBtn.title = 'Copy this layer\'s output';
+  cpyBtn.textContent = t('copyOutput'); cpyBtn.title = 'Copy this layer\'s output';
   cpyBtn.addEventListener('click', e => {
     e.stopPropagation();
     navigator.clipboard.writeText(out).then(() => {
-      cpyBtn.textContent = '✓ Copied'; cpyBtn.style.color = 'var(--green)';
-      setTimeout(() => { cpyBtn.textContent = '⎘ Copy Output'; cpyBtn.style.color = ''; }, 1800);
+      cpyBtn.textContent = t('layerCopied'); cpyBtn.style.color = 'var(--green)';
+      setTimeout(() => { cpyBtn.textContent = t('copyOutput'); cpyBtn.style.color = ''; }, 1800);
     });
   });
   const tog = document.createElement('div'); tog.className = 'layer-toggle'; tog.textContent = '▼';
@@ -500,39 +540,22 @@ document.querySelectorAll('.speed-btn').forEach(btn =>
 function setMode(mode) {
   if (currentMode === mode) return;
   currentMode = mode;
-  
-  if (mode === 'encode') {
-    $modeEncodeBtn.classList.add('active');
-    $modeDecodeBtn.classList.remove('active');
-    $step1Title.textContent = 'Type or Paste your input text';
-    $step1Hint.textContent = 'This is the raw text that will be encoded';
-    $step2Title.textContent = 'Choose your encoding layers';
-    $step2Hint.textContent = "Each encoder's output becomes the next layer's input";
-    $chipsLabel.textContent = 'Available Encoders';
-    $step3Title.textContent = 'Run the Pipeline';
-    $encodeBtn.textContent = 'Run Pipeline';
-  } else {
-    $modeDecodeBtn.classList.add('active');
-    $modeEncodeBtn.classList.remove('active');
-    $step1Title.textContent = 'Type or Paste the text to decode';
-    $step1Hint.textContent = 'This is the encoded text that you want to decode';
-    $step2Title.textContent = 'Choose your decoding layers';
-    $step2Hint.textContent = "Each decoder's output becomes the next layer's input";
-    $chipsLabel.textContent = 'Available Decoders';
-    $step3Title.textContent = 'Run Decode Pipeline';
-    $encodeBtn.textContent = 'Run Decode Pipeline';
-  }
-  
+  updateLanguage();
   resetAll();
 }
 
 $modeEncodeBtn.addEventListener('click', () => setMode('encode'));
 $modeDecodeBtn.addEventListener('click', () => setMode('decode'));
+$langEnBtn.addEventListener('click', () => { if(currentLang !== 'en') { currentLang = 'en'; updateLanguage(); }});
+$langThBtn.addEventListener('click', () => { if(currentLang !== 'th') { currentLang = 'th'; updateLanguage(); }});
 
 // ── Buttons ───────────────────────────────────────────────────────────────────
 $encodeBtn.addEventListener('click', runPipeline);
 $clearBtn.addEventListener('click', resetAll);
 $inputText.addEventListener('keydown', e => { if (e.key === 'Enter' && e.ctrlKey) runPipeline(); });
+
+// Init
+setTimeout(updateLanguage, 0);
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 buildChips();

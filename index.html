@@ -21,10 +21,14 @@
   <header>
     <div class="header-inner">
       <div class="logo">
-        <!-- <span class="logo-icon">⬡</span> -->
         <span class="logo-text">Encode<span class="accent">Lab</span></span>
       </div>
-      <p class="header-subtitle">Step-by-step encoding, made clear</p>
+      <p class="header-subtitle" data-i18n="headerSubtitle">Step-by-step encoding, made clear</p>
+      
+      <div class="lang-toggle">
+        <button id="langEnBtn" class="lang-btn active">EN</button>
+        <button id="langThBtn" class="lang-btn">TH</button>
+      </div>
     </div>
   </header>
 
@@ -34,21 +38,21 @@
     <div class="how-banner">
       <div class="how-item">
         <span class="how-num">①</span>
-        <div class="how-text">
+        <div class="how-text" data-i18n="how1">
           <strong>Type</strong> your text
         </div>
       </div>
       <div class="how-arrow">→</div>
       <div class="how-item">
         <span class="how-num">②</span>
-        <div class="how-text">
+        <div class="how-text" data-i18n="how2">
           <strong>Choose</strong> your encoding layers
         </div>
       </div>
       <div class="how-arrow">→</div>
       <div class="how-item">
         <span class="how-num">③</span>
-        <div class="how-text">
+        <div class="how-text" data-i18n="how3">
           <strong>Run</strong> to see each step
         </div>
       </div>
@@ -65,8 +69,8 @@
     <section class="card">
       <div class="card-step-label">
         <span class="step-dot">1</span>
-        <span id="step1Title">Type or Paste your input text</span>
-        <span class="card-hint" id="step1Hint">This is the raw text that will be encoded</span>
+        <span id="step1Title" data-i18n="step1TitleEncode">Type or Paste your input text</span>
+        <span class="card-hint" id="step1Hint" data-i18n="step1HintEncode">This is the raw text that will be encoded</span>
       </div>
       <textarea id="inputText" class="input-field" placeholder="e.g. Hello" rows="2" spellcheck="false">Hello</textarea>
     </section>
@@ -76,38 +80,39 @@
       <div class="card-step-label" style="justify-content: space-between;">
         <div style="display:flex; align-items:center; gap:12px">
           <span class="step-dot">2</span>
-          <span id="step2Title">Choose your Encoding Layers</span>
+          <span id="step2Title" data-i18n="step2TitleEncode">Choose your Encoding Layers</span>
         </div>
         <div class="mode-toggle">
-          <button id="modeEncodeBtn" class="mode-btn active">Encode</button>
-          <button id="modeDecodeBtn" class="mode-btn">Decode</button>
+          <button id="modeEncodeBtn" class="mode-btn active" data-i18n="encodeBtnLbl">Encode</button>
+          <button id="modeDecodeBtn" class="mode-btn" data-i18n="decodeBtnLbl">Decode</button>
         </div>
       </div>
-      <div class="card-hint" id="step2Hint" style="margin-bottom: 20px;">Each encoder's output becomes the next layer's
+      <div class="card-hint" id="step2Hint" data-i18n="step2HintEncode" style="margin-bottom: 20px;">Each encoder's output becomes the next layer's
         input</div>
 
       <!-- Instruction callout -->
       <div class="instruction-box">
         <span class="instruction-icon">👆</span>
-        <div class="instruction-text">
+        <div class="instruction-text" data-i18n="instructionText">
           <strong>Select an encoder</strong> to add it as a layer.
-          Build a simple pipeline, reorder layers with <kbd>↑</kbd> <kbd>↓</kbd>, or remove one with <kbd>✕</kbd>. <span class="card-hint" style="margin-left: 4px;">(Max 15 layers)</span>
+          Build a simple pipeline, reorder layers with <kbd>↑</kbd> <kbd>↓</kbd>, or remove one with <kbd>✕</kbd>. <span
+            class="card-hint" style="margin-left: 4px;">(Max 15 layers)</span>
         </div>
       </div>
 
       <!-- Encoder chips -->
-      <div class="chips-label" id="chipsLabel">Available Encoders</div>
+      <div class="chips-label" id="chipsLabel" data-i18n="chipsLabelEncode">Available Encoders</div>
       <div class="encoder-grid" id="encoderGrid"></div>
 
       <!-- Layer queue -->
       <div class="queue-label">
-        Your Pipeline Layers
+        <span data-i18n="queueLabel">Your Pipeline Layers</span>
         <span class="queue-label-hint" id="queueCountLabel"></span>
       </div>
       <div class="queue-area" id="queueArea">
         <div class="queue-empty" id="queueEmpty">
           <!-- <span class="queue-empty-icon">⬡</span> -->
-          <span>No layers added yet.<br>Click an encoder above to begin building your pipeline.</span>
+          <span data-i18n="queueEmpty">No layers added yet.<br>Click an encoder above to begin building your pipeline.</span>
         </div>
         <div class="queue-list" id="queueList"></div>
       </div>
@@ -118,9 +123,9 @@
       <div class="run-left">
         <div class="card-step-label" style="margin-bottom:.3rem">
           <span class="step-dot">3</span>
-          <span id="step3Title">Run the Pipeline</span>
+          <span id="step3Title" data-i18n="step3TitleEncode">Run the Pipeline</span>
         </div>
-        <p class="run-hint">
+        <p class="run-hint" data-i18n="runHint">
           Each layer transforms the text, then passes the result to the next layer.
           You'll see a detailed breakdown of <em>every encoding step</em>.
         </p>
@@ -128,18 +133,18 @@
       </div>
       <div class="run-right">
         <div class="speed-control">
-          <span class="speed-label">Animation Speed</span>
+          <span class="speed-label" data-i18n="animSpeed">Animation Speed</span>
           <div class="speed-btns">
-            <button class="speed-btn active" data-speed="500">Slow</button>
-            <button class="speed-btn" data-speed="200">Normal</button>
-            <button class="speed-btn" data-speed="60">Fast</button>
+            <button class="speed-btn active" data-speed="500" data-i18n="speedSlow">Slow</button>
+            <button class="speed-btn" data-speed="200" data-i18n="speedNormal">Normal</button>
+            <button class="speed-btn" data-speed="60" data-i18n="speedFast">Fast</button>
           </div>
         </div>
         <div class="run-btns">
-          <button id="encodeBtn" class="btn btn-primary" disabled>
+          <button id="encodeBtn" class="btn btn-primary" disabled data-i18n="runBtnEncode">
             Run Pipeline
           </button>
-          <button id="clearBtn" class="btn btn-ghost">Reset</button>
+          <button id="clearBtn" class="btn btn-ghost" data-i18n="resetBtn">Reset</button>
         </div>
       </div>
     </section>
@@ -179,18 +184,21 @@
         <!-- Final output -->
         <div class="final-block">
           <div class="final-block-label">
-            Final Encoded Output
-            <span class="final-block-hint">— after all layers have been applied</span>
+            <span data-i18n="finalBlockLabel">Final Encoded Output</span>
+            <span class="final-block-hint" data-i18n="finalBlockHint">— after all layers have been applied</span>
           </div>
+
           <div class="final-output-row">
             <div class="final-output-text" id="finalOutputText"></div>
-            <button class="copy-btn" id="copyBtn">Copy</button>
+            <button class="copy-btn" id="copyBtn">
+              <span id="copyBtnText" data-i18n="copyBtn">Copy</span>
+            </button>
           </div>
         </div>
       </div>
 
       <!-- Layer-by-layer step panels -->
-      <div class="layer-panels-label">
+      <div class="layer-panels-label" data-i18n="layerPanelsLabel">
         Step-by-Step Breakdown — click any layer to expand
       </div>
       <div id="layerPanels"></div>
@@ -203,6 +211,7 @@
     <p>EncodeLab &copy; 2026 — Step-by-step encoding, made clear</p>
   </footer>
 
+  <script src="lang.js"></script>
   <script src="encoders.js"></script>
   <script src="app.js"></script>
 </body>
